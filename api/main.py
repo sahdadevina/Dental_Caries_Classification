@@ -1,6 +1,4 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 import logging
 import gdown
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -9,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 import tensorflow as tf
+tf.config.set_visible_devices([], 'GPU')
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
