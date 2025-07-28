@@ -21,7 +21,7 @@ export const classifyCaries = async (
   try {
     const start = Date.now();
     const response = await axios.post(
-      "http://localhost:8000/api/v1/analyze",
+      "https://dentalcariesclassification-production.up.railway.app",
       formData
     );
     const end = Date.now();
