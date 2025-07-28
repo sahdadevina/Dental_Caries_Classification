@@ -44,10 +44,11 @@ origins = [
     "http://localhost:5173",  # React Vite default
     "http://localhost",
     "http://localhost:8080",
+    "https://dental-caries-classification.netlify.app",
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
