@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
 import numpy as np
 import tensorflow as tf
+import cv2
 tf.config.set_visible_devices([], 'GPU')
 
 # Set up logging
@@ -57,10 +58,24 @@ app.add_middleware(
 
 # Fungsi preprocessing
 def preprocess_image(image: Image.Image) -> np.ndarray:
+    # Ubah ke ukuran 224x224
     img = image.resize((224, 224))
-    img_array = np.array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    return img_array
+    
+    # Konversi ke array dan ubah ke format BGR (untuk OpenCV)
+    img_array = np.array(img)
+    img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+    
+    # Terapkan bilateral filtering (lebih cocok untuk X-ray dental)
+    denoised = cv2.bilateralFilter(img_bgr, d=9, sigmaColor=75, sigmaSpace=75)
+    
+    # Kembali ke RGB (jika model dilatih dengan RGB)
+    denoised_rgb = cv2.cvtColor(denoised, cv2.COLOR_BGR2RGB)
+    
+    # Normalisasi dan tambahkan dimensi batch
+    normalized = denoised_rgb / 255.0
+    img_ready = np.expand_dims(normalized, axis=0)
+    
+    return img_ready
 
 # Endpoint utama
 @app.post("/api/v1/analyze")
